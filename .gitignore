@@ -1,1 +1,7 @@
 history.sqlite
+/.cabal-sandbox/
+/cabal.sandbox.config
+/profile.tar
+
+# ignore distribution directories
+ICryptol-2*
