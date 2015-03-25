@@ -9,27 +9,22 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 module Notebook where
 
-import Cryptol.REPL.Command (loadPrelude,findNbCommand,parseCommand,runCommand,replParse,liftModuleCmd)
-import Cryptol.REPL.Monad (REPL(..) ,runREPL, lName, lPath)
+import Cryptol.REPL.Monad (REPL(..), runREPL)
 import qualified Cryptol.REPL.Monad as REPL
 
-import qualified Cryptol.ModuleSystem as M
-import Cryptol.Parser (defaultConfig, parseModule, Config(..), ParseError)
+import qualified Cryptol.Parser     as P
 import qualified Cryptol.Parser.AST as P
 import Cryptol.Parser.Names (allNamesD, tnamesNT)
 import Cryptol.Parser.Position (Located(..), emptyRange)
-import qualified Cryptol.TypeCheck.AST as T
 import Cryptol.Utils.PP (PP(..), pp, hang, text)
 
-import Control.Applicative (Applicative(..), (<$>))
+import Control.Applicative (Applicative(..))
 import qualified Control.Exception as X
-import Control.Monad (ap, forever)
+import Control.Monad (ap)
 import Control.Monad.IO.Class (MonadIO(..))
 import Data.IORef (IORef, newIORef, readIORef, modifyIORef)
-import Data.List (isPrefixOf)
 import qualified Data.Set as Set
 import Data.Typeable (Typeable)
-import System.IO (hFlush, stdout)
 
 -- Notebook Environment --------------------------------------------------------
 
@@ -76,13 +71,13 @@ instance Monad NB where
 runNB :: NB a -> IO a
 runNB m = do
   ref <- newIORef =<< defaultRW
-  let init = liftREPL $ do
+  let initialize = liftREPL $ do
         -- `let` is confusing in notebook context (see #163)
         REPL.disableLet
         -- turn of warning noise (#163)
         REPL.setUser "warnDefaulting" "no"
         REPL.setUser "warnShadowing"  "no"
-  runREPL True $ unNB (init >> m) ref
+  runREPL True $ unNB (initialize >> m) ref
 
 -- | Lift a REPL action into the NB monad.
 liftREPL :: REPL a -> NB a
@@ -119,7 +114,7 @@ modifyTopDecls f = do
 -- | Notebook exceptions.
 data NBException
   = REPLException REPL.REPLException
-  | AutoParseError ParseError
+  | AutoParseError P.ParseError
     deriving (Show, Typeable)
 
 instance X.Exception NBException

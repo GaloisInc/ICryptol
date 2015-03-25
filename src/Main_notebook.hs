@@ -15,15 +15,13 @@ import Cryptol.REPL.Monad (lName, lPath)
 import qualified Cryptol.REPL.Monad as REPL
 
 import qualified Cryptol.ModuleSystem as M
-import qualified Cryptol.ModuleSystem.Monad as M (setFocusedModule)
 import Cryptol.Parser (defaultConfig, parseModule, Config(..))
 import qualified Cryptol.Parser.AST as P
 import qualified Cryptol.TypeCheck.AST as T
 import Cryptol.Utils.PP (pp, pretty)
 
 import Control.Applicative ((<$>))
-import qualified Control.Exception as X
-import Control.Monad (forever, forM_)
+import Control.Monad (forM_)
 
 import qualified Data.Text as T
 
@@ -31,9 +29,6 @@ import IHaskell.IPython.Kernel
 import IHaskell.IPython.EasyKernel (easyKernel, KernelConfig(..))
 
 import System.Environment (getArgs)
-import System.IO (hFlush, stdout)
-
-import Debug.Trace
 
 main :: IO ()
 main = do
@@ -68,7 +63,7 @@ cryptolConfig = KernelConfig
     displayOut str = [ DisplayData PlainText . T.pack $ str ]
     compl _ _ _    = Nothing
     info _         = Nothing
-    runCell contents clear nbPutStr = do
+    runCell contents _clear nbPutStr = do
       putStrOrig <- liftREPL REPL.getPutStr
       liftREPL $ REPL.setPutStr nbPutStr
       let go = do
@@ -76,9 +71,9 @@ cryptolConfig = KernelConfig
             return ("", Ok)
           handle exn =
             return (pretty exn, Err)
-      (result, status) <- catch go handle
+      (result, stat) <- catch go handle
       liftREPL $ REPL.setPutStr putStrOrig
-      return (result, status, "")
+      return (result, stat, "")
 
 -- Input Handling --------------------------------------------------------------
 
@@ -109,7 +104,6 @@ handleModFrag :: P.Module -> NB ()
 handleModFrag m = do
   let m' = removeIncludes $ removeImports m
   old <- getTopDecls
-  
   let new = modNamedDecls m'
       merged = updateNamedDecls old new
       doLoad = try $ liftREPL $ liftModuleCmd (M.loadModule "<notebook>" (moduleFromDecls nbName merged))
@@ -137,6 +131,4 @@ handleCmd :: String -> NB ()
 handleCmd line =
     case parseCommand (findNbCommand False) line of
       Nothing -> return ()
-      Just cmd -> do
-        mod <- (liftREPL (REPL.getLoadedMod))
-        liftREPL $ runCommand cmd
+      Just cmd -> liftREPL $ runCommand cmd
