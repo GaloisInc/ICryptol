@@ -26,7 +26,9 @@ ifneq (,$(findstring _NT,${UNAME}))
   DIST := ${PKG}.msi
   EXE_EXT := .exe
   adjust-path = '$(shell cygpath -w $1)'
-  PREFIX ?= ${PROGRAM_FILES}/Galois/ICryptol\ ${VERSION}
+  PREFIX ?=
+  # For a systemwide distribution .msi, use:
+  # PREFIX ?= ${PROGRAM_FILES}/Galois/Cryptol\ ${VERSION}
   # split this up because `cabal copy` strips drive letters
   PREFIX_ABS    := /cygdrive/c/${PREFIX}
   # since Windows installs aren't overlapping like /usr/local, we
@@ -35,16 +37,20 @@ ifneq (,$(findstring _NT,${UNAME}))
   # goes under the share prefix
   PREFIX_DOC    := /doc
   PKG_PREFIX    := ${PKG}/${PREFIX}
+  ROOT_PATH     := /cygdrive/c
 else
   DIST := ${PKG}.tar.gz ${PKG}.zip
   EXE_EXT :=
   adjust-path = '$1'
-  PREFIX ?= /usr/local
+  PREFIX ?=
+  # For a systemwide distribution like an .rpm or .pkg, use something like:
+  # PREFIX ?= /usr/local
   PREFIX_ABS := ${PREFIX}
   PREFIX_SHARE := /share
   # goes under the share prefix
   PREFIX_DOC   := /doc/ICryptol
   PKG_PREFIX   := ${PKG}${PREFIX}
+  ROOT_PATH    := /
 endif
 
 ICRYPTOL_EXE := ./dist/build/cryptol/icryptol-kernel${EXE_EXT}
@@ -69,11 +75,28 @@ ${CS_BIN}/alex: | ${CS}
 ${CS_BIN}/happy: | ${CS} ${CS_BIN}/alex
 	$(CABAL_INSTALL) happy
 
-dist/setup-config: ICryptol.cabal | ${CS_BIN}/alex ${CS_BIN}/happy
+
+# We do things differently based on whether we have a PREFIX set by
+# the user. If we do, then we know the eventual path it'll wind up in
+# (useful for stuff like RPMs or Homebrew). If not, we try to be as
+# relocatable as possible.
+ifneq (,${PREFIX})
+  PREFIX_ARG      := --prefix=$(call adjust-path,${PREFIX_ABS})
+  DESTDIR_ARG     := --destdir=${PKG}
+  CONFIGURE_ARGS  := --docdir=$(call adjust-path,${PREFIX_SHARE}/${PREFIX_DOC})
+else
+  # This is kind of weird: 1. Prefix argument must be absolute; Cabal
+  # doesn't yet fully support relocatable packages. 2. We have to
+  # provide *some* prefix here even if we're not using it, otherwise
+  # `cabal copy` will make a mess in the PKG directory.
+  PREFIX_ARG      := --prefix=$(call adjust-path,${ROOT_PATH})
+  DESTDIR_ARG     := --destdir=${PKG}
+  CONFIGURE_ARGS  := --docdir=$(call adjust-path,${PREFIX_SHARE}/${PREFIX_DOC})
+endif
+
+dist/setup-config: ICryptol.cabal Makefile | ${CS_BIN}/alex ${CS_BIN}/happy
 	$(CABAL_INSTALL) --only-dependencies
-	$(CABAL) configure                            \
-          --prefix=$(call adjust-path,${PREFIX_ABS})  \
-          --datasubdir=ICryptol
+	$(CABAL) configure ${PREFIX_ARG} --datasubdir=ICryptol ${CONFIGURE_ARGS}
 
 .PHONY: all
 all: ${ICRYPTOL_EXE}
