@@ -1,5 +1,5 @@
 Name:                ICryptol
-Version:             2.1.0
+Version:             1.0.0
 Synopsis:            ICryptol: An IPython-style interface for Cryptol
 License:             BSD3
 Author:              Galois, Inc.
@@ -21,7 +21,7 @@ executable icryptol-kernel
   other-modules:       Notebook
   build-depends:       base
                      , containers
-                     , cryptol
+                     , cryptol == 2.2.*
                      , ipython-kernel >= 0.3
                      , text
                      , transformers
