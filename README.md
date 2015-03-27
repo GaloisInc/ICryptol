@@ -11,7 +11,11 @@ ICryptol is not currently available on Windows (#12).
 
 # Getting ICryptol Binaries
 
-TODO
+ICryptol binaries for Mac OS X and Linux are available from
+the GitHub
+[releases page](https://github.com/GaloisInc/ICryptol/releases). Mac OS
+X and Linux binaries are distributed as a tarball which you can
+extract to a location of your choice.
 
 ## Getting CVC4
 
@@ -32,23 +36,14 @@ the
 There are a couple extra prerequisites for the notebook, though we
 hope to ease them in the future.
 
-### Cryptol sources
-
-Add a checkout of the Cryptol repository to your cabal sandbox
-sources:
-
-```
-git clone https://github.com/GaloisInc/cryptol.git deps/cryptol
-cabal sandbox init
-cabal sandbox add-source deps/cryptol
-```
-
 ### IPython 2.4
 
 Install IPython 2.4 (see http://ipython.org/install.html, but note
 that we don't yet support IPython 3). Internally we've had the best
 luck installing with `pip install --user
 "ipython[notebook]<3.0.0"`. Make sure `ipython` is on your path.
+
+### ZeroMQ 4
 
 Install ZeroMQ 4 with development headers (see
 https://github.com/gibiansky/IHaskell#zeromq).
@@ -66,11 +61,7 @@ This will build ICryptol in place. From there, there are additional targets:
 
 - `make notebook`: run ICryptol and launch a browser session
 - `make tarball`: build a tarball with a relocatable ICryptol binary and examples
-- `make dist`: build a platform-specific distribution. On all
-  platforms except Windows, this is currently equivalent to `make
-  tarball`. On Windows, this will build an `.msi` package using
-  [WiX Toolset 3.8](http://wixtoolset.org/), which must be installed
-  separately.
+- `make dist`: build a platform-specific distribution.
 
 # Checking your Installation
 
@@ -114,4 +105,5 @@ include (but are not limited to) Adam Foltzer, David Christiansen,
 Dylan McNamee, Aaron Tomb, Iavor Diatchki, Rogan Creswick and Benjamin
 Jones. Special thanks to Andrew Gibianski whose
 [IHaskell](https://github.com/gibiansky/IHaskell) project provides the
-underpinning of this project.
+infrastructure this project uses to communicate with the IPython
+frontend.
