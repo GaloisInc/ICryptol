@@ -5,7 +5,9 @@ run in an [IPython](http://ipython.org/) notebook. There is an
 executable `icryptol-kernel` that uses
 [Cryptol](https://github.com/GaloisInc/cryptol) as a library, and a
 script `icryptol` which sets up the current IPython environment with a
-Cryptol profile. More details are available in issues #75, #76, and #163.
+Cryptol profile.
+
+ICryptol is not currently available on Windows (#12).
 
 # Getting ICryptol Binaries
 
