@@ -1,5 +1,5 @@
 Name:                ICryptol
-Version:             1.0.0
+Version:             1.1.0
 Synopsis:            ICryptol: An IPython-style interface for Cryptol
 License:             BSD3
 Author:              Galois, Inc.
@@ -7,7 +7,7 @@ Maintainer:          cryptol@galois.com
 Copyright:           2013-2015 Galois Inc.
 Category:            Language
 Build-type:          Simple
-Cabal-version:       >= 1.18
+Cabal-version:       >= 1.20
 
 flag static
   default: False
@@ -22,7 +22,7 @@ executable icryptol-kernel
   build-depends:       base
                      , containers
                      , cryptol == 2.2.*
-                     , ipython-kernel >= 0.3
+                     , ipython-kernel >= 0.6
                      , text
                      , transformers
   GHC-options:         -Wall -O2

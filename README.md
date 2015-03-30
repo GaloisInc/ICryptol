@@ -36,12 +36,11 @@ the
 There are a couple extra prerequisites for the notebook, though we
 hope to ease them in the future.
 
-### IPython 2.4
+### IPython 3.0.0
 
-Install IPython 2.4 (see http://ipython.org/install.html, but note
-that we don't yet support IPython 3). Internally we've had the best
-luck installing with `pip install --user
-"ipython[notebook]<3.0.0"`. Make sure `ipython` is on your path.
+Install IPython 3. Internally we've had the best luck installing with
+`pip install --user "ipython[notebook]"`. Make sure `ipython` is
+on your path.
 
 ### ZeroMQ 4
 
