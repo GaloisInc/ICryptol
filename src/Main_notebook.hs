@@ -24,6 +24,7 @@ import Control.Applicative ((<$>))
 import Control.Monad (forM_)
 
 import qualified Data.Text as T
+import qualified Data.Text.Lazy as LT
 
 import IHaskell.IPython.Kernel
 import IHaskell.IPython.EasyKernel (easyKernel, KernelConfig(..))
@@ -87,7 +88,7 @@ handleAuto str = do
           Just (Unknown _)     -> False
           Just (Ambiguous _ _) -> False
           _                    -> True
-  case parseModule cfg str of
+  case parseModule cfg (LT.pack str) of
     Right m -> handleModFrag m
     Left modExn -> do
       let cmds = lines str
@@ -96,7 +97,7 @@ handleAuto str = do
          else raise (AutoParseError modExn)
 
 parseModFrag :: String -> NB P.Module
-parseModFrag str = liftREPL $ replParse (parseModule cfg) str
+parseModFrag str = liftREPL $ replParse (parseModule cfg . LT.pack) str
   where cfg = defaultConfig { cfgSource = "<notebook>" }
 
 -- | Read a module fragment and incorporate it into the current context.
