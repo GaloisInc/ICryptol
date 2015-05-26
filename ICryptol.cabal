@@ -21,7 +21,7 @@ executable icryptol-kernel
   other-modules:       Notebook
   build-depends:       base
                      , containers
-                     , cryptol == 2.2.*
+                     , cryptol == 2.3.*
                      , ipython-kernel >= 0.6
                      , text
                      , transformers
