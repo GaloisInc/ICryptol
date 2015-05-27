@@ -45,8 +45,8 @@ main = do
         easyKernel profileFile cryptolConfig
     _ -> do
       putStrLn "Usage:"
-      putStrLn "icryptol-kernel kernel FILE  -- run a kernel with FILE for \
-               \communication with the frontend"
+      putStrLn $ "icryptol-kernel kernel FILE  -- run a kernel with FILE for "
+              ++ "communication with the frontend"
 
 -- Kernel Configuration --------------------------------------------------------
 cryptolConfig :: KernelConfig NB String String
