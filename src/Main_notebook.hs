@@ -30,6 +30,11 @@ import IHaskell.IPython.EasyKernel (easyKernel, KernelConfig(..))
 
 import System.Environment (getArgs)
 
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative
+#endif
+
+
 main :: IO ()
 main = do
   args <- getArgs

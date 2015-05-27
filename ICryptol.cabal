@@ -26,6 +26,7 @@ executable icryptol-kernel
                      , text
                      , transformers
   GHC-options:         -Wall -O2
+  default-extensions:  CPP
 
   if os(linux) && flag(static)
       ld-options:      -static -pthread

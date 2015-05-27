@@ -25,6 +25,10 @@ import Data.IORef (IORef, newIORef, readIORef, modifyIORef)
 import qualified Data.Set as Set
 import Data.Typeable (Typeable)
 
+#if __GLASGOW_HASKELL__ < 710
+import Control.Applicative
+#endif
+
 -- Notebook Environment --------------------------------------------------------
 
 -- | All of the top-level declarations along with all of the names
