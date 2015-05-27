@@ -20,7 +20,6 @@ import qualified Cryptol.Parser.AST as P
 import qualified Cryptol.TypeCheck.AST as T
 import Cryptol.Utils.PP (pp, pretty)
 
-import Control.Applicative ((<$>))
 import Control.Monad (forM_)
 
 import qualified Data.Text as T
@@ -53,7 +52,7 @@ cryptolConfig = KernelConfig
   , displayResult = displayRes
   , displayOutput = displayOut
   , completion = compl
-  , objectInfo = info
+  , inspectInfo = info
   , run = runCell
   , debug = False
   }

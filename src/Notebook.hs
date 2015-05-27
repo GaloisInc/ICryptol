@@ -18,7 +18,6 @@ import Cryptol.Parser.Names (allNamesD, tnamesNT)
 import Cryptol.Parser.Position (Located(..), emptyRange)
 import Cryptol.Utils.PP (PP(..), pp, hang, text)
 
-import Control.Applicative (Applicative(..))
 import qualified Control.Exception as X
 import Control.Monad (ap)
 import Control.Monad.IO.Class (MonadIO(..))
