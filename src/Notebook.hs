@@ -7,6 +7,7 @@
 -- Portability :  portable
 
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Notebook where
 
 import Cryptol.REPL.Monad (REPL(..), runREPL)
