@@ -121,12 +121,10 @@ notebook: ${PKG}
 	CRYPTOLPATH=$(call adjust-path,$(CURDIR)/lib) \
 	${PKG_BIN}/icryptol --notebook-dir=$(call adjust-path,${PKG_EXAMPLES})
 
-PROFILE_CRYPTOL_SRC := profile_cryptol/ipython_config.py \
-                       profile_cryptol/static/base/images/ipynblogo.png \
-                       profile_cryptol/static/custom/custom.css \
-                       profile_cryptol/static/custom/custom.js
+PROFILE_CRYPTOL_SRC := ipython/kernels/cryptol/kernel.json \
+                       ipython/kernels/cryptol/logo-64x64.png
 profile.tar: ${PROFILE_CRYPTOL_SRC}
-	tar -cvf profile.tar profile_cryptol
+	tar -C ipython -cvf profile.tar kernels
 
 PKG_BIN       := ${PKG_PREFIX}/bin
 PKG_SHARE     := ${PKG_PREFIX}${PREFIX_SHARE}

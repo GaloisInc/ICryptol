@@ -29,9 +29,9 @@ command -v icryptol-kernel >/dev/null 2>&1 || {
     exit 1
 }
 
-ipython locate profile cryptol 2>&1 || {
+ipython kernelspec list | grep cryptol 2>&1 || {
     tar -C $IPYTHONDIR \
         -xf $(dirname $(which icryptol-kernel))/../share/ICryptol/profile.tar
 }
 
-ipython notebook --profile=cryptol $@
+ipython notebook $@
