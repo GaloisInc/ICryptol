@@ -19,11 +19,13 @@ import Cryptol.Parser (defaultConfig, parseModule, Config(..))
 import qualified Cryptol.Parser.AST as P
 import qualified Cryptol.TypeCheck.AST as T
 import Cryptol.Utils.PP (pp, pretty)
+import qualified Cryptol.Version as Cryptol
 
 import Control.Monad (forM_)
 
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
+import Data.Version
 
 import IHaskell.IPython.Kernel
 import IHaskell.IPython.EasyKernel (easyKernel, KernelConfig(..))
@@ -33,7 +35,6 @@ import System.Environment (getArgs)
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative
 #endif
-
 
 main :: IO ()
 main = do
@@ -51,8 +52,7 @@ main = do
 -- Kernel Configuration --------------------------------------------------------
 cryptolConfig :: KernelConfig NB String String
 cryptolConfig = KernelConfig
-  { languageName = "cryptol"
-  , languageVersion = [0,0,1]
+  { kernelLanguageInfo = cryptolInfo
   , profileSource = return Nothing
   , displayResult = displayRes
   , displayOutput = displayOut
@@ -62,6 +62,12 @@ cryptolConfig = KernelConfig
   , debug = False
   }
   where
+    cryptolInfo = LanguageInfo {
+        languageName = "cryptol"
+      , languageVersion = showVersion Cryptol.version
+      , languageFileExtension = ".cry"
+      , languageCodeMirrorMode = "haskell"
+      }
     displayRes str = [ DisplayData MimeHtml . T.pack $ str
                      , DisplayData PlainText . T.pack $ str
                      ]
