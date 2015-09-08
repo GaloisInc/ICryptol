@@ -44,6 +44,7 @@ main = do
       runNB $ do
         liftREPL loadPrelude `catch` \x -> io $ print $ pp x
         easyKernel profileFile cryptolConfig
+    -- TODO: implement "install" command
     _ -> do
       putStrLn "Usage:"
       putStrLn $ "icryptol-kernel kernel FILE  -- run a kernel with FILE for "
@@ -53,7 +54,7 @@ main = do
 cryptolConfig :: KernelConfig NB String String
 cryptolConfig = KernelConfig
   { kernelLanguageInfo = cryptolInfo
-  , profileSource = return Nothing
+  , writeKernelspec = \_ -> return cryptolSpec
   , displayResult = displayRes
   , displayOutput = displayOut
   , completion = compl
@@ -68,12 +69,19 @@ cryptolConfig = KernelConfig
       , languageFileExtension = ".cry"
       , languageCodeMirrorMode = "haskell"
       }
+    cryptolSpec = KernelSpec {
+        kernelDisplayName = "Cryptol"
+      , kernelLanguage = "cryptol"
+      , kernelCommand = ["icryptol-kernel", "kernel", "{connection_file}"]
+      }
     displayRes str = [ DisplayData MimeHtml . T.pack $ str
                      , DisplayData PlainText . T.pack $ str
                      ]
     displayOut str = [ DisplayData PlainText . T.pack $ str ]
-    compl _ _ _    = Nothing
-    info _         = Nothing
+    -- TODO: implement completion
+    compl cell _   = return (cell, [])
+    -- TODO: implement info
+    info _ _       = return Nothing
     runCell contents _clear nbPutStr = do
       putStrOrig <- liftREPL REPL.getPutStr
       liftREPL $ REPL.setPutStr nbPutStr

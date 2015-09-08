@@ -22,7 +22,7 @@ executable icryptol-kernel
   build-depends:       base
                      , containers
                      , cryptol == 2.3.*
-                     , ipython-kernel >= 0.6
+                     , ipython-kernel == 0.8.*
                      , text
                      , transformers
   GHC-options:         -Wall -O2

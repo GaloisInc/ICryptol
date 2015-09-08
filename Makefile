@@ -118,7 +118,6 @@ notebook: ${PKG}
 	mkdir -p $(CURDIR)/.ipython
 	IPYTHONDIR=$(CURDIR)/.ipython \
 	PATH=$(call adjust-path,${CURDIR}/${PKG_BIN}):$$PATH \
-	CRYPTOLPATH=$(call adjust-path,$(CURDIR)/lib) \
 	${PKG_BIN}/icryptol --notebook-dir=$(call adjust-path,${PKG_EXAMPLES})
 
 PROFILE_CRYPTOL_SRC := ipython/kernels/cryptol/kernel.json \
