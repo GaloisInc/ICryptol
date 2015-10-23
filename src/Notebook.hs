@@ -26,16 +26,14 @@ import Data.IORef (IORef, newIORef, readIORef, modifyIORef)
 import qualified Data.Set as Set
 import Data.Typeable (Typeable)
 
-#if __GLASGOW_HASKELL__ < 710
-import Control.Applicative
-#endif
+import Prelude.Compat
 
 -- Notebook Environment --------------------------------------------------------
 
 -- | All of the top-level declarations along with all of the names
 -- that they define. We need to associate the names in order to remove
 -- declarations from the module context when they're overwritten.
-type NamedDecls = [([P.QName], P.TopDecl)]
+type NamedDecls = [([P.PName], P.TopDecl P.PName)]
 
 data RW = RW
   { eNamedDecls :: NamedDecls
@@ -156,17 +154,17 @@ runExns m = m `catch` \x -> io $ print $ pp x
 
 nbName :: P.Located P.ModName
 nbName = Located { srcRange = emptyRange
-                 , thing    = P.ModName ["Notebook"]
+                 , thing    = "Notebook"
                  }
 
 -- | Distill a module into a list of decls along with the names
 -- defined by those decls.
-modNamedDecls :: P.Module -> NamedDecls
+modNamedDecls :: P.Module P.PName -> NamedDecls
 modNamedDecls m = [(tdNames td, td) | td <- P.mDecls m]
 
 -- | Build a module of the given name using the given list of
 -- declarations.
-moduleFromDecls :: P.Located P.ModName -> NamedDecls -> P.Module
+moduleFromDecls :: P.Located P.ModName -> NamedDecls -> P.Module P.PName
 moduleFromDecls name nds =
   P.Module { P.mName = name
            , P.mImports = []
@@ -191,16 +189,16 @@ updateNamedDecls old new = filteredOld ++ new
 
 
 -- | The names defined by a top level declaration
-tdNames :: P.TopDecl -> [P.QName]
+tdNames :: P.TopDecl P.PName -> [P.PName]
 tdNames (P.Decl d)      = map P.thing $ allNamesD $ P.tlValue d
 tdNames (P.TDNewtype d) = map P.thing $ fst $ tnamesNT $ P.tlValue d
 tdNames (P.Include _)   = []
 
-removeIncludes :: P.Module -> P.Module
+removeIncludes :: P.Module P.PName -> P.Module P.PName
 removeIncludes m = m { P.mDecls = decls' }
   where decls' = filter (not . isInclude) $ P.mDecls m
         isInclude (P.Include _) = True
         isInclude _             = False
 
-removeImports :: P.Module -> P.Module
+removeImports :: P.Module P.PName -> P.Module P.PName
 removeImports m = m { P.mImports = [] }

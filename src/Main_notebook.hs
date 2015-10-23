@@ -32,9 +32,7 @@ import IHaskell.IPython.EasyKernel (easyKernel, KernelConfig(..))
 
 import System.Environment (getArgs)
 
-#if __GLASGOW_HASKELL__ < 710
-import Control.Applicative
-#endif
+import Prelude.Compat
 
 main :: IO ()
 main = do
@@ -114,12 +112,12 @@ handleAuto str = do
          then forM_ cmds handleCmd
          else raise (AutoParseError modExn)
 
-parseModFrag :: String -> NB P.Module
+parseModFrag :: String -> NB (P.Module P.PName)
 parseModFrag str = liftREPL $ replParse (parseModule cfg . LT.pack) str
   where cfg = defaultConfig { cfgSource = "<notebook>" }
 
 -- | Read a module fragment and incorporate it into the current context.
-handleModFrag :: P.Module -> NB ()
+handleModFrag :: P.Module P.PName -> NB ()
 handleModFrag m = do
   let m' = removeIncludes $ removeImports m
   old <- getTopDecls

@@ -20,13 +20,14 @@ executable icryptol-kernel
   hs-source-dirs:      src
   other-modules:       Notebook
   build-depends:       base
+                     , base-compat >= 0.6
                      , containers
                      , cryptol == 2.3.*
                      , ipython-kernel == 0.8.*
                      , text
                      , transformers
   GHC-options:         -Wall -O2
-  default-extensions:  CPP
+  default-extensions:  NoImplicitPrelude
 
   if os(linux) && flag(static)
       ld-options:      -static -pthread
