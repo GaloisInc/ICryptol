@@ -95,7 +95,7 @@ else
 endif
 
 dist/setup-config: ICryptol.cabal Makefile | ${CS_BIN}/alex ${CS_BIN}/happy
-	$(CABAL_INSTALL) --only-dependencies
+	$(CABAL_INSTALL) --only-dependencies --max-backjumps=999999
 	$(CABAL) configure ${PREFIX_ARG} --datasubdir=ICryptol ${CONFIGURE_ARGS}
 
 .PHONY: all
